@@ -5,6 +5,7 @@ class Erlang < Formula
   url "https://github.com/erlang/otp/releases/download/OTP-24.0.2/otp_src_24.0.2.tar.gz"
   sha256 "882e8a93194c32cf8335f62c86489c1850d5a5ec9bdfa35fff55b9317213ab8e"
   license "Apache-2.0"
+  revision 1
 
   livecheck do
     url :stable
@@ -27,7 +28,7 @@ class Erlang < Formula
   end
 
   depends_on "openssl@1.1"
-  depends_on "wxmac" # for GUI apps like observer
+  depends_on "wxmac@3.1" # for GUI apps like observer
 
   resource "html" do
     url "https://www.erlang.org/download/otp_doc_html_24.0.tar.gz"
@@ -43,6 +44,9 @@ class Erlang < Formula
     # Do this if building from a checkout to generate configure
     system "./otp_build", "autoconf" unless File.exist? "configure"
 
+    ENV["LDFLAGS="]="-L#{Formula["qt@5"].opt_lib}"
+    ENV["CPPFLAGS="]="-I#{Formula["qt@5"].opt_include}"
+
     args = %W[
       --disable-debug
       --disable-silent-rules
@@ -53,6 +57,7 @@ class Erlang < Formula
       --enable-smp-support
       --enable-threads
       --enable-wx
+      --with-wx=#{Formula["wxmac@3.1"].opt_prefix}
       --with-ssl=#{Formula["openssl@1.1"].opt_prefix}
       --without-javac
     ]
